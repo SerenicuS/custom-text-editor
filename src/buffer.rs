@@ -1,6 +1,15 @@
+//!
+//!
+//!
+//!
+//!
+//!
+//!
+
 use std::fs;
 use std::io;
 use std::path::PathBuf;
+use crate::editor_response;
 
 pub struct Buffer {
     lines: Vec<String>,
@@ -42,7 +51,7 @@ impl Buffer {
             self.modified = false;
             Ok(())
         } else {
-            Err(io::Error::new(io::ErrorKind::NotFound, "No filename"))
+            Err(io::Error::new(io::ErrorKind::NotFound, format!("{}", editor_response::BufferResponse::NoFilenameSet)))
         }
     }
 

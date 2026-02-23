@@ -1,9 +1,10 @@
 use crate::buffer::Buffer;
 use crate::terminal::Terminal;
+use crate::editor_response;
+use crate::constants;
 use std::io::{self, Read, stdin, Write};
 use std::path::PathBuf;
 
-const HELP_MESSAGE: &str = "HELP: Ctrl-Q = quit | Ctrl-S = save | Ctrl-A = save as";
 
 pub struct Editor {
     buffer: Buffer,
@@ -21,8 +22,8 @@ pub struct Editor {
 
 impl Editor {
     pub fn new() -> Self {
-        let terminal = Terminal::new().expect("Failed to initialize terminal");
-        let (rows, cols) = Terminal::get_terminal_size().unwrap_or((24, 80));
+        let terminal = Terminal::new().expect(&editor_response::EditorResponse::TerminalInitializationFailed.to_string());
+        let (rows, cols) = Terminal::get_terminal_size().unwrap_or((constants::DEFAULT_TERMINAL_ROWS, constants::DEFAULT_TERMINAL_COLS));
 
         Editor {
             buffer: Buffer::new(),
@@ -33,15 +34,15 @@ impl Editor {
             screen_rows: rows.saturating_sub(2), // Reserve 2 rows for status bar
             screen_cols: cols,
             quit: false,
-            status_message: String::from(HELP_MESSAGE),
+            status_message: String::from(constants::HELP_MESSAGE),
             save_count: 0,
             message_is_temporary: false,
         }
     }
 
     pub fn from_file(path: &str) -> io::Result<Self> {
-        let terminal = Terminal::new().expect("Failed to initialize terminal");
-        let (rows, cols) = Terminal::get_terminal_size().unwrap_or((24, 80));
+        let terminal = Terminal::new().expect(&editor_response::EditorResponse::TerminalInitializationFailed.to_string());
+        let (rows, cols) = Terminal::get_terminal_size().unwrap_or((constants::DEFAULT_TERMINAL_ROWS, constants::DEFAULT_TERMINAL_COLS));
 
         let buffer = Buffer::from_file(PathBuf::from(path))?;
 
@@ -54,15 +55,15 @@ impl Editor {
             screen_rows: rows.saturating_sub(2),
             screen_cols: cols,
             quit: false,
-            status_message: String::from(HELP_MESSAGE),
+            status_message: String::from(constants::HELP_MESSAGE),
             save_count: 0,
             message_is_temporary: false,
         })
     }
 
     pub fn new_with_filename(path: &str) -> io::Result<Self> {
-        let terminal = Terminal::new().expect("Failed to initialize terminal");
-        let (rows, cols) = Terminal::get_terminal_size().unwrap_or((24, 80));
+        let terminal = Terminal::new().expect(&editor_response::EditorResponse::TerminalInitializationFailed.to_string());
+        let (rows, cols) = Terminal::get_terminal_size().unwrap_or((constants::DEFAULT_TERMINAL_ROWS, constants::DEFAULT_TERMINAL_COLS));
 
         let mut buffer = Buffer::new();
         buffer.set_filename(PathBuf::from(path));
@@ -76,15 +77,15 @@ impl Editor {
             screen_rows: rows.saturating_sub(2),
             screen_cols: cols,
             quit: false,
-            status_message: String::from(HELP_MESSAGE),
+            status_message: String::from(constants::HELP_MESSAGE),
             save_count: 0,
             message_is_temporary: false,
         })
     }
 
     pub fn new_with_save_directory(directory: &str) -> io::Result<Self> {
-        let terminal = Terminal::new().expect("Failed to initialize terminal");
-        let (rows, cols) = Terminal::get_terminal_size().unwrap_or((24, 80));
+        let terminal = Terminal::new().expect(&editor_response::EditorResponse::TerminalInitializationFailed.to_string());
+        let (rows, cols) = Terminal::get_terminal_size().unwrap_or((constants::DEFAULT_TERMINAL_ROWS, constants::DEFAULT_TERMINAL_COLS));
 
         let mut buffer = Buffer::new();
         buffer.set_save_directory(PathBuf::from(directory));
@@ -98,7 +99,7 @@ impl Editor {
             screen_rows: rows.saturating_sub(2),
             screen_cols: cols,
             quit: false,
-            status_message: String::from(HELP_MESSAGE),
+            status_message: String::from(constants::HELP_MESSAGE),
             save_count: 0,
             message_is_temporary: false,
         })
@@ -226,7 +227,7 @@ impl Editor {
 
         // Reset temporary message to help text if it was temporary
         if self.message_is_temporary {
-            self.status_message = String::from(HELP_MESSAGE);
+            self.status_message = String::from(constants::HELP_MESSAGE);
             self.message_is_temporary = false;
         }
 

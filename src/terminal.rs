@@ -56,7 +56,6 @@ impl Terminal {
     #[cfg(not(windows))]
     fn enable_raw_mode(&mut self) -> io::Result<()> {
         // Unix/Linux raw mode would go here
-        // For now, we'll focus on Windows since that's your OS
         Ok(())
     }
 
